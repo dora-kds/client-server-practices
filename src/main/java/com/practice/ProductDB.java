@@ -9,7 +9,7 @@ public interface ProductDB {
     List<Product> getAll();
     boolean update(Product product);
     boolean deleteById(int id);
-
+    boolean validateUser(String login, String password);
     List<Product> findWithFilters(
             String name,
             String category,

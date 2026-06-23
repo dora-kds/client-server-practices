@@ -28,6 +28,29 @@ public class SQLiteProdDB implements ProductDB {
                         price REAL NOT NULL
                     )
                     """);
+
+            st.execute("""
+                    CREATE TABLE IF NOT EXISTS users(
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        login TEXT NOT NULL UNIQUE,
+                        password TEXT NOT NULL
+                    )
+                    """);
+            st.execute("INSERT OR IGNORE INTO users(login, password) VALUES('admin', 'admin123')");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean validateUser(String login, String password) {
+        String sql = "SELECT 1 FROM users WHERE login = ? AND password = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, login);
+            ps.setString(2, password);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
